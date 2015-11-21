@@ -1,0 +1,50 @@
+application:
+  build: docker/application/
+  volumes:
+    - ./:/var/www/symfony
+    - ./docker/logs/symfony:/var/www/symfony/app/logs
+  links:
+    - db
+
+php:
+  build: docker/php/
+  expose:
+    - 9000
+  links:
+    - db
+  volumes_from:
+    - application
+
+db:
+  image: mysql:5.6
+  expose:
+    - 3306
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: symfony
+    MYSQL_USER: root
+    MYSQL_PASSWORD: root
+
+web:
+  build: docker/nginx/
+  ports:
+    - 80:80
+    - 443:443
+  links:
+    - php
+  volumes_from:
+    - application
+  volumes:
+    - ./docker/logs/nginx/:/var/log/nginx
+
+elk:
+    image: willdurand/elk
+    ports:
+        - 81:80
+    volumes:
+        - ./docker/elk/logstash:/etc/logstash
+        - ./docker/elk/logstash/patterns:/opt/logstash/patterns
+    volumes_from:
+        - application
+        - php
+        - web
