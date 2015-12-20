@@ -1,4 +1,4 @@
 # IDE
-.idea/*
+/.idea/
 
-docker/logs/*
+/docker/logs/
