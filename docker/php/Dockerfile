@@ -6,12 +6,13 @@ RUN apt-get update && apt-get install -y \
     npm \
     rubygems \
     && docker-php-ext-install mysql pdo_mysql mbstring intl opcache \
-    && pecl install apcu-4.0.10 \
+    && pecl install apcu-4.0.10 xdebug \
     && echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini
 
 RUN npm install -g uglify-js uglifycss
 RUN gem install sass
 
+ADD xdebug.ini /usr/local/etc/php/conf.d/
 ADD symfony.ini /usr/local/etc/php/conf.d/
 
 RUN echo "\n\nenv[SYMFONY__DATABASE__HOST] = \${DB_PORT_3306_TCP_ADDR}" >> /usr/local/etc/php-fpm.conf \
