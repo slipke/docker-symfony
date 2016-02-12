@@ -19,14 +19,16 @@ db:
   image: mysql:5.6
   expose:
     - 3306
+  ports:
+    - 3306:3306
   volumes:
     - ./docker/mysql/dumps:/docker-entrypoint-initdb.d
   environment:
     MYSQL_ROOT_PASSWORD: root
     MYSQL_DATABASE: symfony
 
-web:
-  build: docker/nginx/
+frontend:
+  build: docker/frontend/
   ports:
     - 80:80
     - 443:443
@@ -35,16 +37,4 @@ web:
   volumes_from:
     - application
   volumes:
-    - ./docker/logs/nginx/:/var/log/nginx
-
-elk:
-    image: willdurand/elk
-    ports:
-        - 81:80
-    volumes:
-        - ./docker/elk/logstash:/etc/logstash
-        - ./docker/elk/logstash/patterns:/opt/logstash/patterns
-    volumes_from:
-        - application
-        - php
-        - web
+    - ./docker/logs/frontend/:/var/log/nginx
